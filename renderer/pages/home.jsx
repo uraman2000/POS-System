@@ -1,99 +1,74 @@
-import React from 'react';
-import Head from 'next/head';
-import Link from 'next/link';
-import {
-  Layout,
-  Form,
-  Select,
-  InputNumber,
-  DatePicker,
-  Switch,
-  Slider,
-  Button,
-} from 'antd';
+import { Card, Input, Layout } from "antd";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import styled from "styled-components";
+import Cart from "../components/Cart";
+import DateTimeNow from "../components/DateTimeNow";
+import ProductList from "../components/Productlist";
+import { inventoryValue, search } from "../slice/inventorySlice";
+const { Header, Footer, Sider, Content } = Layout;
+const { Search } = Input;
 
-const {
-  Header,
-  Content,
-} = Layout;
-const { Item: FormItem } = Form;
-const { Option } = Select;
+const SearchContainer = styled.div``;
+const Row = styled.div`   
+ padding-top: 10px;
+    background-color: white;
+    height: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+    gap: 20px;
+}`;
+const Col = styled.div`
+  width: ${(props) => props.width};
+`;
+const CustomSearch = styled(Search)`
+  width: 100%;
+  margin-bottom: 10px;
+`;
 
-function Home() {
+const CustomLayout = styled.div`
+  padding: 0px;
+  height: 100%;
+`;
+
+export default function home() {
+  const inventory = useSelector(inventoryValue);
+  const dispatch = useDispatch();
+  const onSearch = (value) => {
+    dispatch(search(value));
+  };
+  const onChange = (value) => {
+    dispatch(search(value.target.value));
+  };
   return (
-    <React.Fragment>
-      <Head>
-        <title>Home - Nextron (with-javascript-ant-design)</title>
-      </Head>
-
-      <Header>
-        <Link href="/next">
-          <a>Go to next page</a>
-        </Link>
-      </Header>
-
-      <Content style={{ padding: 48 }}>
-        <Form layout='horizontal'>
-          <FormItem
-            label='Input Number'
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 8 }}
-          >
-            <InputNumber size='large' min={1} max={10} style={{ width: 100 }} defaultValue={3} name='inputNumber' />
-            <a href='#'>Link</a>
-          </FormItem>
-
-          <FormItem
-            label='Switch'
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 8 }}
-          >
-            <Switch defaultChecked />
-          </FormItem>
-
-          <FormItem
-            label='Slider'
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 8 }}
-          >
-            <Slider defaultValue={70} />
-          </FormItem>
-
-          <FormItem
-            label='Select'
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 8 }}
-          >
-            <Select size='large' defaultValue='lucy' style={{ width: 192 }}>
-              <Option value='jack'>jack</Option>
-              <Option value='lucy'>lucy</Option>
-              <Option value='disabled' disabled>disabled</Option>
-              <Option value='yiminghe'>yiminghe</Option>
-            </Select>
-          </FormItem>
-
-          <FormItem
-            label='DatePicker'
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 8 }}
-          >
-            <DatePicker name='startDate' />
-          </FormItem>
-          <FormItem
-            style={{ marginTop: 48 }}
-            wrapperCol={{ span: 8, offset: 8 }}
-          >
-            <Button size='large' type='primary' htmlType='submit'>
-              OK
-            </Button>
-            <Button size='large' style={{ marginLeft: 8 }}>
-              Cancel
-            </Button>
-          </FormItem>
-        </Form>
-      </Content>
-    </React.Fragment>
+    <CustomLayout>
+      <>
+        <Row>
+          <Col width={"80%"} style={{ height: "100%", display: "flex", height: "100%", flexDirection: "column" }}>
+            <div style={{ textAlign: "right" }}>
+              <DateTimeNow />
+            </div>
+            <CustomSearch
+              size="large"
+              placeholder="input search text"
+              onSearch={onSearch}
+              onChange={(e) => onChange(e)}
+            />
+            <Card bodyStyle={{ padding: "0", height: "100%" }} style={{ height: "100%", overflowY: "scroll" }}>
+              <ProductList />
+            </Card>
+          </Col>
+          <Col width={"30%"}>
+            <Card
+              style={{ height: "100%" }}
+              bodyStyle={{ height: "100%", display: "flex", height: "100%", flexDirection: "column" }}
+            >
+              <Cart></Cart>
+            </Card>
+          </Col>
+        </Row>
+      </>
+    </CustomLayout>
   );
-};
-
-export default Home;
+}

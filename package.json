@@ -8,20 +8,34 @@
   "scripts": {
     "dev": "nextron",
     "build": "nextron build",
+    "build:win32": "nextron build --win --ia32",
+    "build:win64": "nextron build --win --x64",
+    "build:mac": "nextron build --mac --x64",
+    "build:linux": "nextron build --linux",
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^1.9.1",
     "electron-serve": "^1.1.0",
-    "electron-store": "^8.1.0"
+    "electron-store": "^8.1.0",
+    "rc-virtual-list": "^3.4.13",
+    "react-devtools-electron": "^4.7.0",
+    "react-redux": "^8.0.5",
+    "redux": "^4.2.0",
+    "styled-components": "^5.3.6"
   },
   "devDependencies": {
     "@ant-design/icons": "^4.7.0",
     "antd": "^4.22.8",
+    "babel-plugin-styled-components": "^2.0.7",
     "electron": "^20.1.0",
     "electron-builder": "^23.3.3",
+    "electron-devtools-installer": "^3.2.0",
+    "electron-react-devtools": "^0.5.3",
     "next": "^12.2.5",
     "nextron": "^8.2.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "typescript": "4.9.4"
   }
 }

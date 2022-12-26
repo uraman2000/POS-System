@@ -1,11 +1,11 @@
 import { CloseCircleTwoTone, DeleteFilled, MinusSquareOutlined } from "@ant-design/icons";
 import { Button, Card, Divider, Input } from "antd";
 import Title from "antd/lib/typography/Title";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { cartValue, clearCart, removeItem, removeQty } from "../slice/cartSlice";
-import { formatNumber } from "../utils/formatNumber";
+import { formatNumber, reverseFormat } from "../utils/formatNumber";
 
 const MContent = styled.div`
   display: flex;
@@ -61,11 +61,37 @@ const MTitle = styled(Title)`
 export default function Cart() {
   const cart = useSelector(cartValue);
   const dispatch = useDispatch();
-  const [change, setChange] = useState(0);
-
+  const [state, setState] = useState({
+    total: 0,
+    change: 0,
+  });
+  const [input, setInput] = useState("");
   const onHandleChange = (e) => {
     const value = e.target.value;
-    setChange(value - cart.total);
+    // console.log(reverseFormat("₱100,000"));
+    value = value.replace(/[^\d]/g, "");
+    const formattedValue = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/^/, "₱");
+    setInput(formattedValue);
+    setState({
+      total: value,
+      change: value - cart.total,
+    });
+  };
+
+  useEffect(() => {
+    setState({
+      ...state,
+      change: state.total - cart.total,
+    });
+  }, [cart.data]);
+
+  const onClear = () => {
+    dispatch(clearCart());
+    setInput("");
+    setState({
+      total: 0,
+      change: 0,
+    });
   };
 
   return (
@@ -75,10 +101,11 @@ export default function Cart() {
         <CloseCircleTwoTone
           style={{ fontSize: "16px", color: "#08c", fontSize: "30px" }}
           twoToneColor="#eb2f96"
-          onClick={() => dispatch(clearCart())}
+          onClick={() => onClear()}
         />
         {/* <button>clear</button> */}
       </Header>
+
       <Divider />
       <MContent>
         {cart.data.map((item, key) => (
@@ -111,9 +138,9 @@ export default function Cart() {
       <Footer>
         <MTitle level={4}>TOTAL : {formatNumber(cart.total)}</MTitle>
         {/* <MTitle level={4}>CASH : ₱</MTitle> */}
-        <Input va size="large" placeholder="CASH ₱" onChange={(e) => onHandleChange(e)}></Input>
-        <MTitle level={4}>CHANGE : {formatNumber(change)}</MTitle>
-        <Button type="primary" size={"large"} disabled={change <= 0 || cart.total == 0 ? true : false}>
+        <Input size="large" placeholder="CASH ₱" value={input} onChange={(e) => onHandleChange(e)}></Input>
+        <MTitle level={4}>CHANGE : {formatNumber(state.change)}</MTitle>
+        <Button type="primary" size={"large"} disabled={state.change < 0 || cart.total == 0 ? true : false}>
           Checkout
         </Button>
       </Footer>

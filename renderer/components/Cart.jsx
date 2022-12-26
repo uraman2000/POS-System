@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { cartValue, clearCart, removeItem, removeQty } from "../slice/cartSlice";
-import { formatNumber, reverseFormat } from "../utils/formatNumber";
+import { formatNumber } from "../utils/formatNumber";
 
 const MContent = styled.div`
   display: flex;

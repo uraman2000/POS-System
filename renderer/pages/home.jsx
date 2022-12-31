@@ -6,6 +6,8 @@ import Cart from "../components/Cart";
 import DateTimeNow from "../components/DateTimeNow";
 import ProductList from "../components/Productlist";
 import { inventoryValue, search } from "../slice/inventorySlice";
+import { ipcRenderer } from "electron";
+import userServices from "../../services/user.services";
 const { Header, Footer, Sider, Content } = Layout;
 const { Search } = Input;
 
@@ -31,15 +33,28 @@ const CustomLayout = styled.div`
   padding: 0px;
   height: 100%;
 `;
-
+const path = require("path");
 export default function home() {
   const inventory = useSelector(inventoryValue);
   const dispatch = useDispatch();
   const onSearch = (value) => {
     dispatch(search(value));
   };
-  const onChange = (value) => {
+  const onChange = async (value) => {
     dispatch(search(value.target.value));
+   
+    const user = await new userServices();
+    console.log(await user.select());
+
+    //   const user = {
+    //     name: "jennina",
+    //     username: "mommy",
+    //     password: "passwordes",
+    //     commission: "200",
+    //     totalIncome: "100",
+    //   };
+    //   const res = await ipcRenderer.invoke("CREATE", "user", user);
+    //   console.log(res);
   };
   return (
     <CustomLayout>

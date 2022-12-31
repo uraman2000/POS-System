@@ -55,7 +55,7 @@ export const cartSlice = createSlice({
       const updatedData = data.filter((item) => item.product_id !== payload.product_id);
 
       // Calculate the total price of all products in the cart
-      const total = 0;
+      let total = 0;
 
       updatedData.forEach((item) => {
         total += item.total_price;

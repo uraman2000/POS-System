@@ -1,13 +1,14 @@
 {
   "private": true,
-  "name": "my-nextron-app",
-  "description": "My application description",
+  "name": "pmi-pos",
+  "description": "PMI POS",
   "version": "1.0.0",
-  "author": "Yoshihide Shiono <shiono.yoshihide@gmail.com>",
+  "author": "Pol Imbing <uraman2000@gmail.com>",
   "main": "app/background.js",
   "scripts": {
     "dev": "nextron",
     "build": "nextron build",
+    "rebuild": "electron-rebuild -f -w sqlite3",
     "build:win32": "nextron build --win --ia32",
     "build:win64": "nextron build --win --x64",
     "build:mac": "nextron build --mac --x64",
@@ -15,18 +16,22 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
-    "@prisma/client": "^4.8.0",
     "@reduxjs/toolkit": "^1.9.1",
     "electron-serve": "^1.1.0",
     "electron-store": "^8.1.0",
+    "knex": "^2.3.0",
     "rc-virtual-list": "^3.4.13",
     "react-devtools-electron": "^4.7.0",
     "react-redux": "^8.0.5",
     "redux": "^4.2.0",
+    "sqlite3": "^5.1.4",
     "styled-components": "^5.3.6"
   },
   "devDependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@electron/rebuild": "^3.2.10",
+    "@types/node": "18.11.18",
+    "@types/react": "18.0.26",
     "antd": "^4.22.8",
     "babel-plugin-styled-components": "^2.0.7",
     "electron": "^20.1.0",

@@ -67,7 +67,7 @@ export default function Cart() {
   });
   const [input, setInput] = useState("");
   const onHandleChange = (e) => {
-    const value = e.target.value;
+    let value = e.target.value;
     // console.log(reverseFormat("₱100,000"));
     value = value.replace(/[^\d]/g, "");
     const formattedValue = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/^/, "₱");

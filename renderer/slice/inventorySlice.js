@@ -21,7 +21,7 @@ export const inventorySlice = createSlice({
         const searchResults = state.data.filter(
           (product) =>
             product.name.toLowerCase().includes(payload.toLowerCase()) ||
-            product.product_id.toLowerCase().includes(payload.toLowerCase())
+            product.id.toLowerCase().includes(payload.toLowerCase())
         );
 
         state.search_data = searchResults;

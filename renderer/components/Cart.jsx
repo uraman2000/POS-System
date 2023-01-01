@@ -68,7 +68,6 @@ export default function Cart() {
   const [input, setInput] = useState("");
   const onHandleChange = (e) => {
     let value = e.target.value;
-    // console.log(reverseFormat("₱100,000"));
     value = value.replace(/[^\d]/g, "");
     const formattedValue = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/^/, "₱");
     setInput(formattedValue);
@@ -121,7 +120,7 @@ export default function Cart() {
             key={key}
           >
             <div>
-              <div>{`ID: ${item.product_id}`}</div>
+              <div>{`ID: ${item.id}`}</div>
               <div>₱{item.total_price}</div>
             </div>
             <div style={{ textAlign: "right" }}>

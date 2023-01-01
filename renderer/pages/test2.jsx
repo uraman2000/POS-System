@@ -14,8 +14,6 @@ export default function test2() {
     <div>
       <button
         onClick={() => {
-          console.log(cart);
-
           dispatch(addCart(data));
         }}
       >

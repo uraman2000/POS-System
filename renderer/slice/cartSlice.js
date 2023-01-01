@@ -13,10 +13,10 @@ export const cartSlice = createSlice({
       const payload = action.payload;
       const data = state.data;
 
-      const existingProduct = data.find((item) => item.product_id === payload.product_id);
+      const existingProduct = data.find((item) => item.id === payload.id);
       if (existingProduct) {
         const updatedData = data.map((item) => {
-          if (item.product_id === payload.product_id) {
+          if (item.id === payload.id) {
             const qty = item.qty + 1;
             return {
               ...item,
@@ -52,7 +52,7 @@ export const cartSlice = createSlice({
       const payload = action.payload;
       const data = state.data;
 
-      const updatedData = data.filter((item) => item.product_id !== payload.product_id);
+      const updatedData = data.filter((item) => item.id !== payload.id);
 
       // Calculate the total price of all products in the cart
       let total = 0;
@@ -71,7 +71,7 @@ export const cartSlice = createSlice({
       const payload = action.payload;
       const data = state.data;
       const updatedData = data.map((item) => {
-        if (item.product_id === payload.product_id) {
+        if (item.id === payload.id) {
           const qty = item.qty - 1;
           return {
             ...item,

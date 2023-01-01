@@ -43,13 +43,44 @@ var knex = require("knex")({
 });
 
 ipcMain.handle("SELECT", async (event, table) => {
-  const result = await knex.select("*").from(table);
+  let result = await knex.select("*").from(table);
   return result;
 });
 
 ipcMain.handle("CREATE", async (event, table, data) => {
-  const result = await knex.insert(data).into(table);
-  return result;
+  try {
+    await knex(table).insert(data);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+ipcMain.handle("UPSERT", async (event, table, data) => {
+  try {
+    const result = await knex(table).where({ id: data.id }).update(data);
+    if (result === 0) {
+      // No rows were updated, so insert a new record
+      await knex(table).insert(data);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+ipcMain.handle("UPDATE", async (event, table, data) => {
+  try {
+    await knex(table).where({ id: data.id }).update(data);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+ipcMain.handle("DELETE", async (event, table, data) => {
+  try {
+    await knex(table).where({ id: data.id }).del();
+  } catch (error) {
+    console.error(error);
+  }
 });
 // ipcMain.handle("executeQuery", async (event, args) => {
 //   // let result = knex.select("*").from("User");

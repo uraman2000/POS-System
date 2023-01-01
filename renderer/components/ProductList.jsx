@@ -1,32 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import DataTable from "./DataTable";
+import productServices from "../../services/product.services";
 import { addInventory, inventoryValue } from "../slice/inventorySlice";
+import DataDisplayTable from "./DataDisplayTable";
 export default function ProductList() {
   const inventory = useSelector(inventoryValue);
   const dispatch = useDispatch();
 
-  const newData = [...Array(10)].map((_, i) => ({
-    product_id: `${1 + i}2214125sdwq`,
-    name: `Red Horse ${i}`,
-    price: Math.floor(Math.random() * (100 - 1 + 1)) + 1,
-  }));
-
   useEffect(() => {
-    const pushdata = () => {
-      newData.push({
-        product_id: `112214125sdwq`,
-        name: `pre 9`,
-        price: Math.floor(Math.random() * (100 - 1 + 1)) + 1,
-      });
+    const fetchData = async () => {
+      const product = await new productServices().select();
+      dispatch(addInventory(product));
     };
-    pushdata();
-    dispatch(addInventory(newData));
+
+    fetchData();
   }, []);
 
+  if (!inventory) return <></>;
   return (
     <>
-      <DataTable data={inventory.search_data} />
+      <DataDisplayTable data={inventory.search_data} />
     </>
   );
 }

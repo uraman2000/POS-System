@@ -8,6 +8,7 @@ import ProductList from "../components/Productlist";
 import { inventoryValue, search } from "../slice/inventorySlice";
 import { ipcRenderer } from "electron";
 import userServices from "../../services/user.services";
+import productServices from "../../services/product.services";
 const { Header, Footer, Sider, Content } = Layout;
 const { Search } = Input;
 
@@ -42,10 +43,6 @@ export default function home() {
   };
   const onChange = async (value) => {
     dispatch(search(value.target.value));
-   
-    const user = await new userServices();
-    console.log(await user.select());
-
     //   const user = {
     //     name: "jennina",
     //     username: "mommy",

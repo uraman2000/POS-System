@@ -1,5 +1,5 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Input, Space, Table, Tooltip } from "antd";
+import { Button, Input, Select, Space, Table, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 
 export default function DataTable(props) {
@@ -71,7 +71,8 @@ export default function DataTable(props) {
     columns.map((item) => {
       if (item.title !== "Actions") addItem[item.title] = "";
     });
-    if (increment) addItem.id = data[data.length - 1].id + 1;
+    if (increment) data.length == 0 ? (addItem.id = 1) : (addItem.id = data[data.length - 1].id + 1);
+
     setIsAddDisabled(true);
     await setData([...data, addItem]);
     setIsEditPressed(false);
@@ -100,7 +101,8 @@ export default function DataTable(props) {
   }, [data]);
 
   const handleChange = (event, index, key) => {
-    const { value } = event.target;
+    let value = event;
+    if (typeof event != "string") value = event.target.value;
 
     setEditedData((prevState) =>
       prevState.map((cell) => {
@@ -143,13 +145,32 @@ export default function DataTable(props) {
               const isDisabled = key == "id" && increment ? true : false;
               return (
                 <Tooltip title="This field is Required" color={"red"} arrowPointAtCenter={true} open={!isEmpty}>
-                  <Input
-                    disabled={isDisabled}
-                    type={type}
-                    status={!isEmpty ? "error" : ""}
-                    value={editedData.find((cell) => cell.index === index && cell.key === key)?.value}
-                    onChange={(event) => handleChange(event, index, key)}
-                  />
+                  {key == "type" ? (
+                    <Select
+                      defaultValue=""
+                      value={editedData.find((cell) => cell.index === index && cell.key === key)?.value}
+                      style={{ width: 120 }}
+                      onChange={(event) => handleChange(event, index, key)}
+                      options={[
+                        {
+                          value: "Admin",
+                          label: "Admin",
+                        },
+                        {
+                          value: "Employee",
+                          label: "Employee",
+                        },
+                      ]}
+                    />
+                  ) : (
+                    <Input
+                      disabled={isDisabled}
+                      type={type}
+                      status={!isEmpty ? "error" : ""}
+                      value={editedData.find((cell) => cell.index === index && cell.key === key)?.value}
+                      onChange={(event) => handleChange(event, index, key)}
+                    />
+                  )}
                 </Tooltip>
               );
             } else {

@@ -10,13 +10,11 @@ export default class userServices {
     await ipcRenderer.invoke("UPDATE", table, data);
   }
   async Upsert(data) {
-    console.log(process.env);
-
     var ciphertext = CryptoJS.AES.encrypt(
       data.password,
       "U2FsdGVkX19MzYlbkzFaByEFs+lX30sw70TkfbFwdMU="
     ).toString();
-    console.log(ciphertext);
+
     data.password = ciphertext;
     return await ipcRenderer.invoke("UPSERT", table, data);
   }

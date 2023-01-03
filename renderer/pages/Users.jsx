@@ -37,7 +37,7 @@ export default function Users() {
       <DataTable
         // excemptColumn={["id"]}
         increment
-        colCustom={["id", "name", "username", "password", "commission", "totalIncome"]}
+        colCustom={["id", "name", "username", "password", "type", "commission", "totalIncome"]}
         data={data}
         onUpsert={(data) => onUpsert(data)}
         onDelete={(data) => onDelete(data)}

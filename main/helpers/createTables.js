@@ -39,6 +39,7 @@ export default function createTables(knex) {
       table.string("name").notNullable();
       table.string("username").notNullable();
       table.string("password").notNullable();
+      table.string("type").notNullable();
       table.integer("commission").notNullable();
       table.integer("totalIncome").notNullable();
     })

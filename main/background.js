@@ -2,8 +2,20 @@ import { app, ipcMain } from "electron";
 import serve from "electron-serve";
 import { createWindow } from "./helpers";
 import installExtension, { REDUX_DEVTOOLS } from "electron-devtools-installer";
-const isProd = process.env.NODE_ENV === "production";
+import createTables from "./helpers/createTables";
+import insertSampleData from "./helpers/insertSampleData";
 
+const isProd = process.env.NODE_ENV === "production";
+// this is where to put the db in roaming folder
+// C:\Users\Polaius\AppData\Roaming\pmi-pos
+const path = require("path");
+var knex = require("knex")({
+  client: "sqlite3",
+  connection: {
+    filename: path.join(app.getPath("userData"), "./dev.db"),
+    flags: ["OPEN_URI", "OPEN_SHAREDCACHE"],
+  },
+});
 if (isProd) {
   serve({ directory: "app" });
 } else {
@@ -26,25 +38,27 @@ if (isProd) {
     mainWindow.webContents.openDevTools();
   }
 })();
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  try {
+    await createTables(knex);
+  } catch (error) {}
+
+  try {
+    // insertSampleData(knex);
+  } catch (error) {
+    console.log(error);
+  }
   installExtension(REDUX_DEVTOOLS)
     .then((name) => console.log(`Added Extension:  ${name}`))
     .catch((err) => console.log("An error occurred: ", err));
 });
-// this is where to put the db in roaming folder
-// C:\Users\Polaius\AppData\Roaming\pmi-pos
-const path = require("path");
-var knex = require("knex")({
-  client: "sqlite3",
-  connection: {
-    filename: path.join(app.getPath("userData"), "./dev.db"),
-    flags: ["OPEN_URI", "OPEN_SHAREDCACHE"],
-  },
-});
 
-ipcMain.handle("SELECT", async (event, table) => {
-  let result = await knex.select("*").from(table);
-  return result;
+ipcMain.handle("SELECT", async (event, table, columns) => {
+  try {
+    const col = !columns ? "*" : columns.split(",");
+    let result = await knex.select(col).from(table);
+    return result;
+  } catch (error) {}
 });
 
 ipcMain.handle("CREATE", async (event, table, data) => {
@@ -63,7 +77,7 @@ ipcMain.handle("UPSERT", async (event, table, data) => {
       await knex(table).insert(data);
     }
   } catch (error) {
-    console.error(error);
+    return error;
   }
 });
 

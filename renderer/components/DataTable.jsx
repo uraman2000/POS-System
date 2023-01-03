@@ -1,11 +1,12 @@
+import { PlusOutlined } from "@ant-design/icons";
+import { Button, Input, Space, Table, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
-import { Table, Input, Button, FloatButton, Space } from "antd";
-import { PlusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import productServices from "../../services/product.services";
 
 export default function DataTable(props) {
-  const { onDelete, onUpsert } = props;
+  const { onDelete, onUpsert, excemptColumn, colCustom, increment } = props;
   const [data, setData] = useState(props.data);
+  const [isAddDisabled, setIsAddDisabled] = useState(false);
+  const [isEditPressed, setIsEditPressed] = useState(false);
   if (!data) return <div>nodat</div>;
   const [editMode, setEditMode] = useState(false);
   const [editedRow, setEditedRow] = useState(-1);
@@ -13,10 +14,12 @@ export default function DataTable(props) {
   const [buttonControls, setButtonControls] = useState({
     add: false,
   });
+
   const handleEdit = (index) => {
+    setIsEditPressed(true);
+    setIsAddDisabled(true);
     setEditedRow(index);
     setEditMode(true);
-    setButtonControls({ add: true });
 
     setEditedData(
       Object.keys(data[index]).map((key) => ({
@@ -32,19 +35,19 @@ export default function DataTable(props) {
   };
 
   const handleCancelEdit = () => {
-    setEditMode(false);
-    setEditedRow(-1);
     setEditedData([]);
-    const newData = data.slice(0, -1);
-    if (buttonControls.add) {
+    if (!isEditPressed) {
+      setEditedRow(-1);
+      const newData = data.slice(0, -1);
       setData(newData);
-      setButtonControls({ add: false });
     }
+    setIsAddDisabled(false);
+    setEditMode(false);
+    setIsEditPressed(false);
   };
 
   const handleSave = () => {
     let newData = [...data];
-    console.log("save");
     editedData.map((cell) => {
       newData[cell.index] = { ...newData[cell.index], [`${cell.key}`]: cell.value };
     });
@@ -61,15 +64,32 @@ export default function DataTable(props) {
     setButtonControls({ add: false });
     setEditedRow(-1);
     setEditedData([]);
+    setIsAddDisabled(false);
   };
   const handleAdd = async (columns) => {
     const addItem = {};
     columns.map((item) => {
       if (item.title !== "Actions") addItem[item.title] = "";
     });
-
+    if (increment) addItem.id = data[data.length - 1].id + 1;
+    setIsAddDisabled(true);
     await setData([...data, addItem]);
+    setIsEditPressed(false);
   };
+  useEffect(() => {
+    if (isAddDisabled && !isEditPressed && increment) {
+      const index = data.length - 1;
+      setEditedRow(index);
+      setEditMode(true);
+      setEditedData(
+        Object.keys(data[index]).map((key) => ({
+          index,
+          key,
+          value: data[index][key],
+        }))
+      );
+    }
+  }, [isAddDisabled]);
 
   useEffect(() => {
     if (data.length == 0) return;
@@ -104,28 +124,55 @@ export default function DataTable(props) {
           dataIndex: key,
           key,
           render: (text, record, index) => {
+            let type = "string";
+            if (
+              key == "commission" ||
+              key == "totalIncome" ||
+              key == "id" ||
+              key == "cost" ||
+              key == "price" ||
+              key == "quantity"
+            )
+              type = "number";
+            if (key == "password") type = "password";
             if (editMode && editedRow === index) {
+              const isEmpty = editedData.find((cell) => cell.index === index && cell.key === key)?.value
+                ? true
+                : false;
+
+              const isDisabled = key == "id" && increment ? true : false;
               return (
-                <Input
-                  value={editedData.find((cell) => cell.index === index && cell.key === key)?.value}
-                  onChange={(event) => handleChange(event, index, key)}
-                />
+                <Tooltip title="This field is Required" color={"red"} arrowPointAtCenter={true} open={!isEmpty}>
+                  <Input
+                    disabled={isDisabled}
+                    type={type}
+                    status={!isEmpty ? "error" : ""}
+                    value={editedData.find((cell) => cell.index === index && cell.key === key)?.value}
+                    onChange={(event) => handleChange(event, index, key)}
+                  />
+                </Tooltip>
               );
             } else {
+              if (key == "password") return "*********";
               return text;
             }
           },
         }))
-      : [];
+      : colCustom.map((item) => ({
+          title: item,
+          dataIndex: item,
+          key: item,
+        }));
   columns.push({
     title: "Actions",
     key: "actions",
     dataIndex: "actions",
     render: (text, record, index) => {
       if (editMode && editedRow === index) {
+        const isNoEmptyField = editedData.filter((item) => item.value == "").length <= 0 ? true : false;
         return (
           <Space size={"small"}>
-            <Button type="primary" onClick={handleSave}>
+            <Button disabled={!isNoEmptyField} type="primary" onClick={handleSave}>
               Save
             </Button>
             <Button onClick={handleCancelEdit}>Cancel</Button>
@@ -147,7 +194,7 @@ export default function DataTable(props) {
   return (
     <Space direction="vertical" style={{ width: "100%" }}>
       <Button
-        disabled={buttonControls.add}
+        disabled={isAddDisabled}
         onClick={() => handleAdd(columns)}
         type="primary"
         shape="round"

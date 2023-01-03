@@ -27,7 +27,12 @@ export default function Products() {
   if (!inventory.data) return <></>;
   return (
     <div>
-      <DataTable data={inventory.data} onUpsert={(data) => onUpsert(data)} onDelete={(data) => onDelete(data)} />
+      <DataTable
+        colCustom={["id", "name", "cost", "price", "quantity"]}
+        data={inventory.data}
+        onUpsert={(data) => onUpsert(data)}
+        onDelete={(data) => onDelete(data)}
+      />
     </div>
   );
 }

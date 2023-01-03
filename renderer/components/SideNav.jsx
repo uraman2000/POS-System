@@ -15,7 +15,7 @@ const getItem = (label, key, icon, children, type) => {
 const items = [
   getItem(<Link href="/home">Home</Link>, "1", <PieChartOutlined />),
   getItem(<Link href="/Products">Products</Link>, "2", <DesktopOutlined />),
-  getItem(<Link href="/test2">test2</Link>, "3", <ContainerOutlined />),
+  getItem(<Link href="/Users">Users</Link>, "3", <ContainerOutlined />),
   getItem(<Link href="/test">Ant Design</Link>, "link", <LinkOutlined />),
 ];
 export default function SideNav() {

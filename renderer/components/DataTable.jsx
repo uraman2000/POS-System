@@ -1,9 +1,10 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Button, Input, Select, Space, Table, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
+import BarcodeReader from "react-barcode-reader";
 
 export default function DataTable(props) {
-  const { onDelete, onUpsert, excemptColumn, colCustom, increment } = props;
+  const { onDelete, onUpsert, excemptColumn, colCustom, increment, isScanable } = props;
   const [data, setData] = useState(props.data);
   const [isAddDisabled, setIsAddDisabled] = useState(false);
   const [isEditPressed, setIsEditPressed] = useState(false);
@@ -66,29 +67,33 @@ export default function DataTable(props) {
     setEditedData([]);
     setIsAddDisabled(false);
   };
-  const handleAdd = async (columns) => {
+  const handleAdd = async (columns, scanValue) => {
     const addItem = {};
     columns.map((item) => {
       if (item.title !== "Actions") addItem[item.title] = "";
     });
     if (increment) data.length == 0 ? (addItem.id = 1) : (addItem.id = data[data.length - 1].id + 1);
+    if (isScanable) data.length == 0 ? (addItem.id = 1) : (addItem.id = scanValue);
 
     setIsAddDisabled(true);
     await setData([...data, addItem]);
     setIsEditPressed(false);
   };
   useEffect(() => {
-    if (isAddDisabled && !isEditPressed && increment) {
-      const index = data.length - 1;
-      setEditedRow(index);
-      setEditMode(true);
-      setEditedData(
-        Object.keys(data[index]).map((key) => ({
-          index,
-          key,
-          value: data[index][key],
-        }))
-      );
+    if (isAddDisabled && !isEditPressed) {
+      // isScanable
+      if (increment || isScanable) {
+        const index = data.length - 1;
+        setEditedRow(index);
+        setEditMode(true);
+        setEditedData(
+          Object.keys(data[index]).map((key) => ({
+            index,
+            key,
+            value: data[index][key],
+          }))
+        );
+      }
     }
   }, [isAddDisabled]);
 
@@ -211,22 +216,27 @@ export default function DataTable(props) {
       }
     },
   });
+  const onScan = async (value) => {
+    if (!isAddDisabled && isScanable) handleAdd(columns, value);
+  };
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }}>
-      <Button
-        disabled={isAddDisabled}
-        onClick={() => handleAdd(columns)}
-        type="primary"
-        shape="round"
-        icon={<PlusOutlined />}
-        size={"large"}
-        style={{ float: "right" }}
-      >
-        add
-      </Button>
-      <Table pagination={false} dataSource={data} columns={columns} rowKey={(record) => record.id} />
-      {/* <FloatButton
+    <>
+      <BarcodeReader onError={(e) => console.log("BarcodeReader Error:" + e)} onScan={(val) => onScan(val)} />
+      <Space direction="vertical" style={{ width: "100%" }}>
+        <Button
+          disabled={isAddDisabled}
+          onClick={() => handleAdd(columns)}
+          type="primary"
+          shape="round"
+          icon={<PlusOutlined />}
+          size={"large"}
+          style={{ float: "right" }}
+        >
+          add
+        </Button>
+        <Table pagination={false} dataSource={data} columns={columns} rowKey={(record) => record.id} />
+        {/* <FloatButton
         disabled={buttonControls.add}
         onClick={() => handleAdd(columns)}
         tooltip="add Item"
@@ -234,6 +244,7 @@ export default function DataTable(props) {
         type="primary"
         shape={"circle"}
       /> */}
-    </Space>
+      </Space>
+    </>
   );
 }

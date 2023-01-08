@@ -22,6 +22,7 @@
     "electron-store": "^8.1.0",
     "knex": "^2.3.0",
     "rc-virtual-list": "^3.4.13",
+    "react-barcode-reader": "^0.0.2",
     "react-devtools-electron": "^4.7.0",
     "react-redux": "^8.0.5",
     "redux": "^4.2.0",

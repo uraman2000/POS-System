@@ -30,6 +30,7 @@ export default function Products() {
       <DataTable
         colCustom={["id", "name", "cost", "price", "quantity"]}
         data={inventory.data}
+        isScanable
         onUpsert={(data) => onUpsert(data)}
         onDelete={(data) => onDelete(data)}
       />

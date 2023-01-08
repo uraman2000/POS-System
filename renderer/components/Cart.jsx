@@ -1,11 +1,14 @@
-import { CloseCircleTwoTone, DeleteFilled, MinusSquareOutlined } from "@ant-design/icons";
+import { CloseCircleTwoTone, DeleteFilled, MinusSquareOutlined, PlusSquareOutlined } from "@ant-design/icons";
 import { Button, Card, Divider, Input } from "antd";
 import Title from "antd/lib/typography/Title";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import styled from "styled-components";
-import { cartValue, clearCart, removeItem, removeQty } from "../slice/cartSlice";
+import styled, { keyframes } from "styled-components";
+import productServices from "../../services/product.services";
+import { addCart, cartValue, clearCart, removeItem, removeQty } from "../slice/cartSlice";
 import { formatNumber } from "../utils/formatNumber";
+import { addInventory, inventoryValue } from "../slice/inventorySlice";
+import { barcodeValue, disableInput, enableInput } from "../slice/barcodeSlice";
 
 const MContent = styled.div`
   display: flex;
@@ -58,8 +61,12 @@ const Footer = styled.div`
 const MTitle = styled(Title)`
   margin: 0 !important;
 `;
+
+const product = new productServices();
 export default function Cart() {
   const cart = useSelector(cartValue);
+  const barcode = useSelector(barcodeValue);
+  const [ms, setMs] = useState(0);
   const dispatch = useDispatch();
   const [state, setState] = useState({
     total: 0,
@@ -92,9 +99,32 @@ export default function Cart() {
       change: 0,
     });
   };
+  const onCheckout = async () => {
+    const decrementQTY = cart.data.map((item) => ({
+      id: item.id,
+      quantity: item.quantity - item.qty,
+    }));
+    decrementQTY.forEach(async (element) => {
+      await product.Upsert(element);
+    });
+    onClear();
+    dispatch(addInventory(await product.select()));
+  };
+  const keydownHandler = (e) => {
+    setMs(e.timeStamp);
+    console.log(performance.now() - e.timeStamp);
+    if (performance.now() - e.timeStamp > 1) {
+      dispatch(disableInput());
+      setInput("");
+    }
+    setTimeout(() => {
+      dispatch(enableInput());
 
+    }, 200);
+  };
   return (
     <>
+    {/* {console.log(ms)} */}
       <Header>
         <Title level={2}>Cart</Title>
         <CloseCircleTwoTone
@@ -129,6 +159,10 @@ export default function Cart() {
                 style={{ marginRight: "5px", color: " rgb(244, 67, 54)" }}
               />
               x {item.qty}
+              <PlusSquareOutlined
+                onClick={() => dispatch(addCart(item))}
+                style={{ marginLeft: "5px", color: "green" }}
+              />
             </div>
           </MCard>
         ))}
@@ -137,9 +171,21 @@ export default function Cart() {
       <Footer>
         <MTitle level={4}>TOTAL : {formatNumber(cart.total)}</MTitle>
         {/* <MTitle level={4}>CASH : ₱</MTitle> */}
-        <Input size="large" placeholder="CASH ₱" value={input} onChange={(e) => onHandleChange(e)}></Input>
+        <Input
+          onKeyDown={(e) => keydownHandler(e)}
+          disabled={barcode.isdisableInput}
+          size="large"
+          placeholder="CASH ₱"
+          value={input}
+          onChange={(e) => onHandleChange(e)}
+        ></Input>
         <MTitle level={4}>CHANGE : {formatNumber(state.change)}</MTitle>
-        <Button type="primary" size={"large"} disabled={state.change < 0 || cart.total == 0 ? true : false}>
+        <Button
+          onClick={onCheckout}
+          type="primary"
+          size={"large"}
+          disabled={state.change < 0 || cart.total == 0 ? true : false}
+        >
           Checkout
         </Button>
       </Footer>

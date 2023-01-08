@@ -11,7 +11,6 @@ export default function DataDisplayTable({ data }) {
   const inventory = useSelector(inventoryValue);
   const dispatch = useDispatch();
 
-
   if (!data) return <div>no data</div>;
 
   const columns =
@@ -32,11 +31,8 @@ export default function DataDisplayTable({ data }) {
   };
 
   const addCartHandler = (record) => {
-    console.log(record);
     if (!record) {
-      return dispatch(
-        showNotification({ type: "error", title: "Error", message: `No Item Found. Ref: ${value}` })
-      );
+      return dispatch(showNotification({ type: "error", title: "Error", message: `No Item Found.` }));
     }
     if (record.quantity <= 0)
       dispatch(

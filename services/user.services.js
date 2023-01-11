@@ -23,7 +23,6 @@ export default class UserServices {
     return { status: 200, data: res[0] };
   }
   async setCommision(user, data) {
-    console.log(user);
     const updateEmployee = { ...user };
     const owner = await this.find({ type: "Owner" });
     delete owner[0].password;

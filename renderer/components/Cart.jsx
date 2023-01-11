@@ -108,6 +108,7 @@ export default function Cart() {
     });
   };
   const onCheckout = async () => {
+    onClear();
     const decrementQTY = cart.data.map((item) => ({
       id: item.id,
       quantity: item.quantity - item.qty,
@@ -116,7 +117,6 @@ export default function Cart() {
       await product.Upsert(element);
     });
     const newUser = await userServices.setCommision(user, cart.data);
-    console.log(newUser);
     localStorage.setItem("User", JSON.stringify(newUser));
     dispatch(setInfo());
 
@@ -135,7 +135,6 @@ export default function Cart() {
     };
     await transactionServices.insertTrasaction(transactionData, cart.data);
 
-    onClear();
     dispatch(addInventory(await product.select()));
   };
   const keydownHandler = (e) => {

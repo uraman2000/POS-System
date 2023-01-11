@@ -46,11 +46,11 @@ export default function Transaction() {
       <Table
         dataSource={record.transactionItem}
         columns={[
-          {
-            title: "ID",
-            dataIndex: "id",
-            key: "id",
-          },
+          // {
+          //   title: "ID",
+          //   dataIndex: "id",
+          //   key: "id",
+          // },
           {
             title: "Order Quantity",
             dataIndex: "quantity",
@@ -61,11 +61,11 @@ export default function Transaction() {
             key: "product",
             render: (item) => <span>{item.product.name}</span>,
           },
-          {
-            title: "Stock Quantity",
-            key: "stockquantity",
-            render: (item) => <span>{item.product.quantity}</span>,
-          },
+          // {
+          //   title: "Stock Quantity",
+          //   key: "stockquantity",
+          //   render: (item) => <span>{item.product.quantity}</span>,
+          // },
         ]}
         pagination={false}
         size="small"
@@ -89,11 +89,6 @@ export default function Transaction() {
       key: "user",
     },
     {
-      title: "Total Income",
-      dataIndex: "totalIncome",
-      key: "totalIncome",
-    },
-    {
       title: "Total",
       dataIndex: "total",
       key: "total",
@@ -101,7 +96,6 @@ export default function Transaction() {
   ];
   return (
     <>
-      {console.log(state)}
       <Table
         dataSource={state}
         columns={columns}

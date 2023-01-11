@@ -59,7 +59,6 @@ export default function home() {
     }, 200);
   };
   useEffect(() => {
-    // console.log();
     dispatch(setInfo());
   }, [dispatch]);
 

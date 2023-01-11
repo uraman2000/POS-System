@@ -2,10 +2,13 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Button, Input, Select, Space, Table, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import BarcodeReader from "react-barcode-reader";
+import { useDispatch, useSelector } from "react-redux";
+import { usertValue } from "../slice/userSlice";
 
 export default function DataTable(props) {
-  const { onDelete, onUpsert, excemptColumn, colCustom, increment, isScanable } = props;
+  const { onDelete, onUpsert, excemptColumn, colCustom, increment, isScanable, disableOwner } = props;
   const [data, setData] = useState(props.data);
+  const userInfo = useSelector(usertValue);
   const [isAddDisabled, setIsAddDisabled] = useState(false);
   const [isEditPressed, setIsEditPressed] = useState(false);
   if (!data) return <div>nodat</div>;
@@ -73,7 +76,7 @@ export default function DataTable(props) {
       if (item.title !== "Actions") addItem[item.title] = "";
     });
     if (increment) data.length == 0 ? (addItem.id = 1) : (addItem.id = data[data.length - 1].id + 1);
-    if (isScanable) data.length == 0 ? (addItem.id = 1) : (addItem.id = scanValue);
+    if (isScanable) addItem.id = scanValue;
 
     setIsAddDisabled(true);
     await setData([...data, addItem]);
@@ -162,8 +165,8 @@ export default function DataTable(props) {
                           label: "Admin",
                         },
                         {
-                          value: "Employee",
-                          label: "Employee",
+                          value: "Cashier",
+                          label: "Cashier",
                         },
                         {
                           value: "Owner",
@@ -198,6 +201,11 @@ export default function DataTable(props) {
     key: "actions",
     dataIndex: "actions",
     render: (text, record, index) => {
+      const disableButton = (record) => {
+        if (userInfo.type == "Owner") return false;
+        if (disableOwner && record.type == "Owner") return true;
+        return false;
+      };
       if (editMode && editedRow === index) {
         const isNoEmptyField = editedData.filter((item) => item.value == "").length <= 0 ? true : false;
         return (
@@ -211,10 +219,12 @@ export default function DataTable(props) {
       } else {
         return (
           <Space size={"small"}>
-            <Button type="primary" onClick={() => handleEdit(index)}>
+            <Button disabled={disableButton(record)} type="primary" onClick={() => handleEdit(index)}>
               Edit
             </Button>
-            <Button onClick={() => handleDelete(record)}>Delete</Button>
+            <Button disabled={disableButton(record)} onClick={() => handleDelete(record)}>
+              Delete
+            </Button>
           </Space>
         );
       }

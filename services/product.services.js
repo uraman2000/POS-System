@@ -1,6 +1,6 @@
 import { ipcRenderer } from "electron";
 
-export default class productServices {
+export default class ProductServices {
   async select() {
     return await ipcRenderer.invoke("SELECT", "product");
   }

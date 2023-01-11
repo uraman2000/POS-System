@@ -9,6 +9,10 @@ import { addCart, cartValue, clearCart, removeItem, removeQty } from "../slice/c
 import { formatNumber } from "../utils/formatNumber";
 import { addInventory, inventoryValue } from "../slice/inventorySlice";
 import { barcodeValue, disableInput, enableInput } from "../slice/barcodeSlice";
+import TransactionItemServices from "../../services/transactionItem.services";
+import TransactionServices from "../../services/transaction.services";
+import { setInfo, usertValue } from "../slice/userSlice";
+import UserServices from "../../services/user.services";
 
 const MContent = styled.div`
   display: flex;
@@ -63,9 +67,13 @@ const MTitle = styled(Title)`
 `;
 
 const product = new productServices();
+const transactionItemServices = new TransactionItemServices();
+const transactionServices = new TransactionServices();
+const userServices = new UserServices();
 export default function Cart() {
   const cart = useSelector(cartValue);
   const barcode = useSelector(barcodeValue);
+  const user = useSelector(usertValue);
   const [ms, setMs] = useState(0);
   const dispatch = useDispatch();
   const [state, setState] = useState({
@@ -107,24 +115,42 @@ export default function Cart() {
     decrementQTY.forEach(async (element) => {
       await product.Upsert(element);
     });
+    const newUser = await userServices.setCommision(user, cart.data);
+    console.log(newUser);
+    localStorage.setItem("User", JSON.stringify(newUser));
+    dispatch(setInfo());
+
+    const currentDate = new Date().toLocaleString("en-us", {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const transactionData = {
+      dateTime: currentDate,
+      total: cart.total,
+      userid: user.id,
+    };
+    await transactionServices.insertTrasaction(transactionData, cart.data);
+
     onClear();
     dispatch(addInventory(await product.select()));
   };
   const keydownHandler = (e) => {
     setMs(e.timeStamp);
-    console.log(performance.now() - e.timeStamp);
+
     if (performance.now() - e.timeStamp > 1) {
       dispatch(disableInput());
       setInput("");
     }
     setTimeout(() => {
       dispatch(enableInput());
-
     }, 200);
   };
   return (
     <>
-    {/* {console.log(ms)} */}
       <Header>
         <Title level={2}>Cart</Title>
         <CloseCircleTwoTone
@@ -132,7 +158,6 @@ export default function Cart() {
           twoToneColor="#eb2f96"
           onClick={() => onClear()}
         />
-        {/* <button>clear</button> */}
       </Header>
 
       <Divider />
@@ -170,8 +195,8 @@ export default function Cart() {
       <Divider />
       <Footer>
         <MTitle level={4}>TOTAL : {formatNumber(cart.total)}</MTitle>
-        {/* <MTitle level={4}>CASH : ₱</MTitle> */}
         <Input
+          status={state.change < 0 || cart.total == 0 ? "error" : ""}
           onKeyDown={(e) => keydownHandler(e)}
           disabled={barcode.isdisableInput}
           size="large"

@@ -1,15 +1,13 @@
 import { Card, Input, Layout } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import Cart from "../components/Cart";
 import DateTimeNow from "../components/DateTimeNow";
 import ProductList from "../components/Productlist";
-import { inventoryValue, search } from "../slice/inventorySlice";
-import { ipcRenderer } from "electron";
-import userServices from "../../services/user.services";
-import productServices from "../../services/product.services";
 import { barcodeValue, disableInput, enableInput } from "../slice/barcodeSlice";
+import { inventoryValue, search } from "../slice/inventorySlice";
+import { setInfo } from "../slice/userSlice";
 
 const { Header, Footer, Sider, Content } = Layout;
 const { Search } = Input;
@@ -40,26 +38,31 @@ const path = require("path");
 export default function home() {
   const inventory = useSelector(inventoryValue);
   const dispatch = useDispatch();
-  const [input, setInput] = useState("")
+  const [input, setInput] = useState("");
   const barcode = useSelector(barcodeValue);
   const onSearch = (value) => {
     dispatch(search(value));
   };
   const onChange = async (value) => {
     dispatch(search(value.target.value));
-     setInput(value.target.value);
+    setInput(value.target.value);
   };
 
   const keydownHandler = (e) => {
     if (performance.now() - e.timeStamp > 1) {
       dispatch(disableInput());
       dispatch(search(""));
-      setInput("")
+      setInput("");
     }
     setTimeout(() => {
       dispatch(enableInput());
     }, 200);
   };
+  useEffect(() => {
+    // console.log();
+    dispatch(setInfo());
+  }, [dispatch]);
+
   return (
     <CustomLayout>
       <>

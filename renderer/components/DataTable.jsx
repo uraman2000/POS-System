@@ -165,6 +165,10 @@ export default function DataTable(props) {
                           value: "Employee",
                           label: "Employee",
                         },
+                        {
+                          value: "Owner",
+                          label: "Owner",
+                        },
                       ]}
                     />
                   ) : (
@@ -235,7 +239,14 @@ export default function DataTable(props) {
         >
           add
         </Button>
-        <Table pagination={false} dataSource={data} columns={columns} rowKey={(record) => record.id} />
+        <Table
+          // pagination={false}
+          dataSource={data}
+          columns={columns}
+          rowKey={(record) => record.id}
+          // pagination={pagination}
+          pagination={{ pageSize: 12, position: "bottomRight" }}
+        />
         {/* <FloatButton
         disabled={buttonControls.add}
         onClick={() => handleAdd(columns)}

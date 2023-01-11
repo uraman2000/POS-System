@@ -1,15 +1,12 @@
 import { ipcRenderer } from "electron";
 
-const table = "transaction";
-export default class TransactionServices {
+const table = "transactionItem";
+export default class TransactionItemServices {
   async select() {
     return await ipcRenderer.invoke("SELECT", table);
   }
   async update(data) {
     await ipcRenderer.invoke("UPDATE", table, data);
-  }
-  async insertTrasaction(transaction, item) {
-    await ipcRenderer.invoke("InsertTransanction", transaction, item);
   }
 
   async Upsert(data) {

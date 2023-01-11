@@ -61,6 +61,32 @@ ipcMain.handle("SELECT", async (event, table, columns) => {
   } catch (error) {}
 });
 
+ipcMain.handle("InsertTransanction", async (event, transaction, transactionItem) => {
+  return knex("transaction")
+    .insert(transaction)
+    .returning("id")
+    .then(function (response) {
+      console.log(response[0].id);
+      const items = transactionItem.map((item) => ({
+        quantity: item.qty,
+        transactionId: response[0].id,
+        productId: item.id,
+      }));
+      items.map(async (item) => {
+        console.log(item);
+        await knex("transactionItem").insert(item);
+      });
+    });
+});
+ipcMain.handle("FIND", async (event, table, where) => {
+  try {
+    return await knex.select("*").from(table).where(where);
+    await knex(table).where({ id: data.id }).update(data);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
 ipcMain.handle("CREATE", async (event, table, data) => {
   try {
     await knex(table).insert(data);

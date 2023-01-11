@@ -4,6 +4,7 @@ import cartReducer from "../slice/cartSlice";
 import inventoryReducer from "../slice/inventorySlice";
 import notificationReducer from "../slice/notificationSlice";
 import barcodeReducer from "../slice/barcodeSlice";
+import userReducer from "../slice/userSlice";
 
 export default configureStore({
   reducer: {
@@ -12,5 +13,6 @@ export default configureStore({
     inventory: inventoryReducer,
     notification: notificationReducer,
     barcode: barcodeReducer,
+    user: userReducer,
   },
 });

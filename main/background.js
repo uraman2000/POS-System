@@ -44,10 +44,17 @@ app.whenReady().then(async () => {
   } catch (error) {}
 
   try {
-    // insertSampleData(knex);
+    const user = await knex.select("*").from("user").limit(1);
+    const products = await knex.select("*").from("product").limit(1);
+
+    console.log(user.length);
+    if (user.length === 0 && products.length === 0) {
+      insertSampleData(knex);
+    }
   } catch (error) {
     console.log(error);
   }
+
   installExtension(REDUX_DEVTOOLS)
     .then((name) => console.log(`Added Extension:  ${name}`))
     .catch((err) => console.log("An error occurred: ", err));

@@ -51,15 +51,21 @@ export default function Transaction() {
           //   dataIndex: "id",
           //   key: "id",
           // },
+
+          {
+            title: "Product",
+            key: "product",
+            render: (item) => <span>{item.product.name}</span>,
+          },
           {
             title: "Order Quantity",
             dataIndex: "quantity",
             key: "quantity",
           },
           {
-            title: "Product",
-            key: "product",
-            render: (item) => <span>{item.product.name}</span>,
+            title: "Price",
+            key: "price",
+            render: (item) => <span>{item.product.price}</span>,
           },
           // {
           //   title: "Stock Quantity",

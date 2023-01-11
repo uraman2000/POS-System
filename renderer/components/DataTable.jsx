@@ -172,6 +172,10 @@ export default function DataTable(props) {
                           value: "Owner",
                           label: "Owner",
                         },
+                        {
+                          value: "Co-Owner",
+                          label: "Co-Owner",
+                        },
                       ]}
                     />
                   ) : (
@@ -255,7 +259,7 @@ export default function DataTable(props) {
           columns={columns}
           rowKey={(record) => record.id}
           // pagination={pagination}
-          pagination={{ pageSize: 12, position: "bottomRight" }}
+          pagination={{ pageSize: 15, position: "bottomRight" }}
         />
         {/* <FloatButton
         disabled={buttonControls.add}

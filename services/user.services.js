@@ -23,16 +23,18 @@ export default class UserServices {
     return { status: 200, data: res[0] };
   }
   async setCommision(user, data) {
-    const updateEmployee = { ...user };
     const owner = await this.find({ type: "Owner" });
+    const coOwner = await this.find({ type: "Co-Owner" });
     delete owner[0].password;
-
-    updateEmployee.totalIncome += (calculateNet(data) / 100) * updateEmployee.commission;
+    delete coOwner[0].password;
+    console.log(owner[0]);
+    coOwner[0].totalIncome += (calculateNet(data) / 100) * coOwner[0].commission;
     owner[0].totalIncome += (calculateNet(data) / 100) * owner[0].commission;
 
-    await ipcRenderer.invoke("UPDATE", table, updateEmployee);
+    await ipcRenderer.invoke("UPDATE", table, coOwner[0]);
     await ipcRenderer.invoke("UPDATE", table, owner[0]);
-    return updateEmployee;
+    if (user.type === "Co-Owner") return coOwner[0];
+    return user;
   }
   async update(data) {
     await ipcRenderer.invoke("UPDATE", table, data);

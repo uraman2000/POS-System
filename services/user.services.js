@@ -1,4 +1,5 @@
 import { ipcRenderer, safeStorage } from "electron";
+import { calculateNet } from "../utils";
 var CryptoJS = require("crypto-js");
 
 const table = "user";
@@ -27,9 +28,14 @@ export default class UserServices {
     const coOwner = await this.find({ type: "Co-Owner" });
     delete owner[0].password;
     delete coOwner[0].password;
-    console.log(owner[0]);
-    coOwner[0].totalIncome += (calculateNet(data) / 100) * coOwner[0].commission;
-    owner[0].totalIncome += (calculateNet(data) / 100) * owner[0].commission;
+
+    let totalNet = 0;
+    data.map((item) => {
+      totalNet += calculateNet(item.price, item.cost, item.qty);
+    });
+
+    coOwner[0].totalIncome += (totalNet / 100) * coOwner[0].commission;
+    owner[0].totalIncome += (totalNet / 100) * owner[0].commission;
 
     await ipcRenderer.invoke("UPDATE", table, coOwner[0]);
     await ipcRenderer.invoke("UPDATE", table, owner[0]);
@@ -54,10 +60,3 @@ export default class UserServices {
 // qty: 1;
 // quantity: 52;
 // total_price: 120;
-const calculateNet = (data) => {
-  let totalCommision = 0;
-  data.map((item) => {
-    totalCommision += (item.price - item.cost) * item.qty;
-  });
-  return totalCommision;
-};

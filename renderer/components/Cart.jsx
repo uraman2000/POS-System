@@ -14,6 +14,7 @@ import TransactionServices from "../../services/transaction.services";
 import { setInfo, usertValue } from "../slice/userSlice";
 import UserServices from "../../services/user.services";
 import { showNotification } from "../slice/notificationSlice";
+import { calculateNet } from "../../utils";
 
 const MContent = styled.div`
   display: flex;
@@ -137,10 +138,16 @@ export default function Cart() {
       hour: "2-digit",
       minute: "2-digit",
     });
+
+    let totalNet = 0;
+    cart.data.map((item) => {
+      totalNet += calculateNet(item.price, item.cost, item.qty);
+    });
     const transactionData = {
       dateTime: currentDate,
       total: cart.total,
       userid: user.id,
+      totalNet: totalNet,
     };
     await transactionServices.insertTrasaction(transactionData, cart.data);
 
@@ -149,7 +156,7 @@ export default function Cart() {
       showNotification({
         type: "success",
         title: "Success",
-        message: `Checkout successfully with the total of  ${state.toal} `,
+        message: `Checkout successfully with the total of  ${cart.total} `,
       })
     );
   };

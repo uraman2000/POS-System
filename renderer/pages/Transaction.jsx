@@ -63,9 +63,19 @@ export default function Transaction() {
             key: "quantity",
           },
           {
+            title: "Cost",
+            key: "product",
+            render: (item) => <span>{item.product.cost}</span>,
+          },
+          {
             title: "Price",
             key: "price",
             render: (item) => <span>{item.product.price}</span>,
+          },
+          {
+            title: "Total Net",
+            dataIndex: "totalNet",
+            key: "totalNet",
           },
           // {
           //   title: "Stock Quantity",
@@ -90,7 +100,7 @@ export default function Transaction() {
       key: "dateTime",
     },
     {
-      title: "User",
+      title: "Cashier",
       dataIndex: "user",
       key: "user",
     },
@@ -98,6 +108,11 @@ export default function Transaction() {
       title: "Total",
       dataIndex: "total",
       key: "total",
+    },
+    {
+      title: "Total Net",
+      dataIndex: "totalNet",
+      key: "totalNet",
     },
   ];
   return (

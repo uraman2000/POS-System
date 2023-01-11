@@ -4,6 +4,7 @@ import { createWindow } from "./helpers";
 import installExtension, { REDUX_DEVTOOLS } from "electron-devtools-installer";
 import createTables from "./helpers/createTables";
 import insertSampleData from "./helpers/insertSampleData";
+import { calculateNet } from "../utils";
 
 const isProd = process.env.NODE_ENV === "production";
 // this is where to put the db in roaming folder
@@ -78,6 +79,7 @@ ipcMain.handle("InsertTransanction", async (event, transaction, transactionItem)
         quantity: item.qty,
         transactionId: response[0].id,
         productId: item.id,
+        totalNet: calculateNet(item.price, item.cost, item.qty),
       }));
       items.map(async (item) => {
         console.log(item);

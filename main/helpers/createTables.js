@@ -17,6 +17,7 @@ export default function createTables(knex) {
       table.datetime("dateTime").notNullable();
       table.float("total").notNullable();
       table.integer("userId").notNullable();
+      table.integer("totalNet").notNullable();
     })
     .then(function () {
       console.log("Transaction table created!");
@@ -28,6 +29,7 @@ export default function createTables(knex) {
       table.integer("quantity").notNullable();
       table.integer("transactionId").notNullable();
       table.string("productId").notNullable();
+      table.integer("totalNet").notNullable();
     })
     .then(function () {
       console.log("TransactionItem table created!");

@@ -3,10 +3,12 @@ import { Button, Input, Select, Space, Table, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import BarcodeReader from "react-barcode-reader";
 import { useDispatch, useSelector } from "react-redux";
+import { showNotification } from "../slice/notificationSlice";
 import { usertValue } from "../slice/userSlice";
 
 export default function DataTable(props) {
   const { onDelete, onUpsert, excemptColumn, colCustom, increment, isScanable, disableOwner } = props;
+  const dispatch = useDispatch();
   const [data, setData] = useState(props.data);
   const userInfo = useSelector(usertValue);
   const [isAddDisabled, setIsAddDisabled] = useState(false);
@@ -235,6 +237,15 @@ export default function DataTable(props) {
     },
   });
   const onScan = async (value) => {
+    if (isScanable === undefined) return;
+
+    const isExist = data.find((item) => item.id === value);
+    if (isExist) {
+      dispatch(
+        showNotification({ type: "error", title: "Error", message: `${value} already exist in the Inventory` })
+      );
+      return;
+    }
     if (!isAddDisabled && isScanable) handleAdd(columns, value);
   };
 

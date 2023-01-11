@@ -13,6 +13,7 @@ import TransactionItemServices from "../../services/transactionItem.services";
 import TransactionServices from "../../services/transaction.services";
 import { setInfo, usertValue } from "../slice/userSlice";
 import UserServices from "../../services/user.services";
+import { showNotification } from "../slice/notificationSlice";
 
 const MContent = styled.div`
   display: flex;
@@ -80,12 +81,18 @@ export default function Cart() {
     total: 0,
     change: 0,
   });
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState([
+    {
+      status: "",
+      value: "",
+    },
+  ]);
   const onHandleChange = (e) => {
     let value = e.target.value;
     value = value.replace(/[^\d]/g, "");
     const formattedValue = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/^/, "₱");
-    setInput(formattedValue);
+    const inputIsError = state.change < cart.total || state.change < 0 ? "error" : "";
+    setInput({ status: inputIsError, value: formattedValue });
     setState({
       total: value,
       change: value - cart.total,
@@ -93,6 +100,8 @@ export default function Cart() {
   };
 
   useEffect(() => {
+    const inputIsError = state.change < cart.total || state.change < 0 ? "error" : "";
+    setInput({ ...input, status: inputIsError });
     setState({
       ...state,
       change: state.total - cart.total,
@@ -101,7 +110,7 @@ export default function Cart() {
 
   const onClear = () => {
     dispatch(clearCart());
-    setInput("");
+    setInput({ status: "", value: "" });
     setState({
       total: 0,
       change: 0,
@@ -136,13 +145,20 @@ export default function Cart() {
     await transactionServices.insertTrasaction(transactionData, cart.data);
 
     dispatch(addInventory(await product.select()));
+    dispatch(
+      showNotification({
+        type: "success",
+        title: "Success",
+        message: `Checkout successfully with the total of  ${state.toal} `,
+      })
+    );
   };
   const keydownHandler = (e) => {
     setMs(e.timeStamp);
 
     if (performance.now() - e.timeStamp > 1) {
       dispatch(disableInput());
-      setInput("");
+      setInput({ ...input, value: "" });
     }
     setTimeout(() => {
       dispatch(enableInput());
@@ -195,12 +211,12 @@ export default function Cart() {
       <Footer>
         <MTitle level={4}>TOTAL : {formatNumber(cart.total)}</MTitle>
         <Input
-          status={state.change < 0 || cart.total == 0 ? "error" : ""}
+          status={input.status}
           onKeyDown={(e) => keydownHandler(e)}
           disabled={barcode.isdisableInput}
           size="large"
           placeholder="CASH ₱"
-          value={input}
+          value={input.value}
           onChange={(e) => onHandleChange(e)}
         ></Input>
         <MTitle level={4}>CHANGE : {formatNumber(state.change)}</MTitle>

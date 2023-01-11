@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import userServices from "../../services/user.services";
 import DataTable from "../components/DataTable";
-import { showNotification } from "../slice/notificationSlice";
 
 export default function Users() {
   const dispatch = useDispatch();
@@ -27,13 +26,6 @@ export default function Users() {
   if (!data) return <></>;
   return (
     <div>
-      <button
-        onClick={() => {
-          dispatch(showNotification({ type: "error", title: "Error", message: "messs" }));
-        }}
-      >
-        buton
-      </button>
       <DataTable
         // excemptColumn={["id"]}
         increment

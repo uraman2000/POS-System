@@ -1,6 +1,6 @@
 appId: com.example.nextron
-productName: My Nextron App
-copyright: Copyright © 2018 Yoshihide Shiono
+productName: PMI POS SYSTEM
+copyright: Copyright PMI POS SYSTEM
 directories:
   output: dist
   buildResources: resources

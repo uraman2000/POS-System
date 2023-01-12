@@ -43,10 +43,15 @@ export default class UserServices {
     return user;
   }
   async update(data) {
+    data.password = hash(data.password);
     await ipcRenderer.invoke("UPDATE", table, data);
   }
   async Upsert(data) {
-    data.password = hash(data.password);
+    const res = await ipcRenderer.invoke("FIND", table, { password: data.password });
+    if (res.length == 0) {
+      data.password = hash(data.password);
+    }
+
     return await ipcRenderer.invoke("UPSERT", table, data);
   }
   async delete(data) {

@@ -1,10 +1,23 @@
 import { Table } from "antd";
 import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 import ProductServices from "../../services/product.services";
 import TransactionServices from "../../services/transaction.services";
 import TransactionItemServices from "../../services/transactionItem.services";
 import UserServices from "../../services/user.services";
 
+const CustomTable = styled(Table)`
+  height: 100%;
+  .ant-spin-nested-loading {
+    height: 100%;
+  }
+  .ant-spin-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+`;
 export default function Transaction() {
   const transactionService = new TransactionServices();
   const transactionItemService = new TransactionItemServices();
@@ -117,7 +130,7 @@ export default function Transaction() {
   ];
   return (
     <>
-      <Table
+      <CustomTable
         dataSource={state}
         columns={columns}
         expandable={{

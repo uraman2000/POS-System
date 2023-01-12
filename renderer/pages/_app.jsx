@@ -1,5 +1,6 @@
 import { Layout } from "antd";
 import "antd/dist/antd.css";
+import Title from "antd/lib/typography/Title";
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import { Provider } from "react-redux";

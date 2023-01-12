@@ -1,14 +1,23 @@
 import { ContainerOutlined, DesktopOutlined, PieChartOutlined } from "@ant-design/icons";
-import { Button, Layout, Menu, Slider } from "antd";
+import { Button, Layout, Menu } from "antd";
+import Title from "antd/lib/typography/Title";
 import Link from "next/link";
 import React from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
+import { usertValue } from "../slice/userSlice";
 const { Header, Footer, Sider, Content } = Layout;
-const Container = styled(Sider)`
+const Container = styled.div`
+  flex-grow: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+const CustomSider = styled(Sider)`
   .ant-layout-sider-children {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
   }
 `;
 const getItem = (label, key, icon, children, type) => {
@@ -45,10 +54,16 @@ const item2 = [
   ),
 ];
 export default function SideNav() {
+  const user = useSelector(usertValue);
   return (
-    <Container>
-      <Menu defaultSelectedKeys={["1"]} defaultOpenKeys={["sub1"]} mode="inline" theme="dark" items={items} />
-      <Menu defaultSelectedKeys={["1"]} defaultOpenKeys={["sub1"]} mode="inline" theme="dark" items={item2} />
-    </Container>
+    <CustomSider>
+      <Title level={4} style={{ color: "white", textAlign: "center" }}>
+        Welcome, <br /> {user?.name}!
+      </Title>
+      <Container>
+        <Menu defaultSelectedKeys={["1"]} defaultOpenKeys={["sub1"]} mode="inline" theme="dark" items={items} />
+        <Menu defaultSelectedKeys={["1"]} defaultOpenKeys={["sub1"]} mode="inline" theme="dark" items={item2} />
+      </Container>
+    </CustomSider>
   );
 }

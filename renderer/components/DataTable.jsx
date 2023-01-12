@@ -152,7 +152,12 @@ export default function DataTable(props) {
                 ? true
                 : false;
 
-              const isDisabled = key == "id" && increment ? true : false;
+              const isDisabled = () => {
+                if (key == "id" && increment) return true;
+                if (key == "commission" && userInfo.type != "Owner") return true;
+                if (key == "totalIncome" && userInfo.type != "Owner") return true;
+                return false;
+              };
               return (
                 <Tooltip title="This field is Required" color={"red"} arrowPointAtCenter={true} open={!isEmpty}>
                   {key == "type" ? (
@@ -170,19 +175,19 @@ export default function DataTable(props) {
                           value: "Cashier",
                           label: "Cashier",
                         },
-                        {
-                          value: "Owner",
-                          label: "Owner",
-                        },
-                        {
-                          value: "Co-Owner",
-                          label: "Co-Owner",
-                        },
+                        // {
+                        //   value: "Owner",
+                        //   label: "Owner",
+                        // },
+                        // {
+                        //   value: "Co-Owner",
+                        //   label: "Co-Owner",
+                        // },
                       ]}
                     />
                   ) : (
                     <Input
-                      disabled={isDisabled}
+                      disabled={isDisabled()}
                       type={type}
                       status={!isEmpty ? "error" : ""}
                       value={editedData.find((cell) => cell.index === index && cell.key === key)?.value}
@@ -207,7 +212,10 @@ export default function DataTable(props) {
     key: "actions",
     dataIndex: "actions",
     render: (text, record, index) => {
-      const disableButton = (record) => {
+      const isDisableButton = (record, buttonType) => {
+        if (buttonType == "Delete") {
+          if (userInfo.type !== "Owner") return true;
+        }
         if (userInfo.type == "Owner") return false;
         if (disableOwner && record.type == "Owner") return true;
         return false;
@@ -225,10 +233,10 @@ export default function DataTable(props) {
       } else {
         return (
           <Space size={"small"}>
-            <Button disabled={disableButton(record)} type="primary" onClick={() => handleEdit(index)}>
+            <Button disabled={isDisableButton(record, "Edit")} type="primary" onClick={() => handleEdit(index)}>
               Edit
             </Button>
-            <Button disabled={disableButton(record)} onClick={() => handleDelete(record)}>
+            <Button disabled={isDisableButton(record, "Delete")} onClick={() => handleDelete(record)}>
               Delete
             </Button>
           </Space>

@@ -1,42 +1,44 @@
-<p align="center"><img src="https://i.imgur.com/NrkTPe9.png"></p>
+# README
 
-## Usage
+## Introduction
+This app is built with [Nextron](https://github.com/saltyshiomix/nextron) and React.js and currently only supports Windows and Mac operating systems.
 
-### Create an App
+## Installation and Running locally
+To run the app locally, clone the repository and run the following commands:
 
-```
-# with npx
-$ npx create-nextron-app my-app --example with-javascript-ant-design
-
-# with yarn
-$ yarn create nextron-app my-app --example with-javascript-ant-design
-
-# with pnpx
-$ pnpx create-nextron-app my-app --example with-javascript-ant-design
-```
-
-### Install Dependencies
 
 ```
-$ cd my-app
-
-# using yarn or npm
-$ yarn (or `npm install`)
-
-# using pnpm
-$ pnpm install --shamefully-hoist
+$ npm install
+$ npm run dev
 ```
 
-### Use it
+## Building the App
+To build the app for Windows (32-bit or 64-bit), run:
+
 
 ```
-# development mode
-$ yarn dev (or `npm run dev` or `pnpm run dev`)
-
-# production build
-$ yarn build (or `npm run build` or `pnpm run build`)
+$ npm run build:win32
 ```
 
-## Resources
+or
 
-<https://ant.design>
+```
+$ npm run build:win64
+```
+
+To build the app for Mac, run:
+
+```
+$ npm run build:mac
+```
+To build the app for linux, run:
+
+```
+$ npm run build:linux
+```
+## Additional Notes
+- The app uses SQLite3, so you may need to run `npm run rebuild` to rebuild the SQLite3 module for your specific OS.
+
+
+## Conclusion
+The above instructions will help you to build and run the application on Windows, Mac and Linux operating systems.

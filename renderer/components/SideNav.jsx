@@ -1,4 +1,4 @@
-import { ContainerOutlined, DesktopOutlined, PieChartOutlined } from "@ant-design/icons";
+import { HistoryOutlined, HomeOutlined, LogoutOutlined, PieChartOutlined, ShoppingCartOutlined, UsergroupAddOutlined } from "@ant-design/icons";
 import { Button, Layout, Menu } from "antd";
 import Title from "antd/lib/typography/Title";
 import Link from "next/link";
@@ -31,10 +31,11 @@ const getItem = (label, key, icon, children, type) => {
 };
 
 const items = [
-  getItem(<Link href="/home">Home</Link>, "1", <PieChartOutlined />),
-  getItem(<Link href="/Products">Products</Link>, "2", <DesktopOutlined />),
-  getItem(<Link href="/Users">Users</Link>, "3", <ContainerOutlined />),
-  getItem(<Link href="/Transaction">Transaction</Link>, "4", <ContainerOutlined />),
+  getItem(<Link href="/home">Home</Link>, "1", <HomeOutlined />),
+  getItem(<Link href="/Products">Products</Link>, "2", <ShoppingCartOutlined />),
+  getItem(<Link href="/Users">Users</Link>, "3", <UsergroupAddOutlined />),
+  getItem(<Link href="/Transaction">Transaction</Link>, "4", <HistoryOutlined />),
+  getItem(<Link href="/Analytics">Analytics</Link>, "5", <PieChartOutlined />),
   // getItem(<Link href="/test">Ant Design</Link>, "link", <LinkOutlined />),
 ];
 const item2 = [
@@ -50,7 +51,7 @@ const item2 = [
       Logout
     </Button>,
     "0",
-    <PieChartOutlined />
+    <LogoutOutlined />
   ),
 ];
 export default function SideNav() {

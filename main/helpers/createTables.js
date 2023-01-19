@@ -6,6 +6,7 @@ export default function createTables(knex) {
       table.float("cost").notNullable();
       table.float("price").notNullable();
       table.integer("quantity").notNullable();
+      table.datetime("updated_at").notNullable();
     })
     .then(function () {
       console.log("Product table created!");
@@ -44,6 +45,7 @@ export default function createTables(knex) {
       table.string("type").notNullable();
       table.integer("commission").notNullable();
       table.integer("totalIncome").notNullable();
+      table.datetime("updated_at").notNullable();
     })
     .then(function () {
       console.log("User table created!");
